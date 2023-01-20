@@ -1,40 +1,39 @@
-#include <stdio.h>
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
 #include "monty.h"
-
 /**
- * push - push element into the stack
- * @stack: stack given by main
- * @line_cnt: ammount of lines
+ * push - adds the top two values of the stack
+ * @stack: pointer to the top of the stack
+ * @line_number: the line number of the command being run
  * Return: void
  */
-void push(stack_t **stack, unsigned int line_cnt)
+void push(stack_t **stack, unsigned int line_number)
 {
-	char *n = global.argument;
+	stack_t *new, *tmp;
+	(void) line_number;
 
-	if ((is_digit(n)) == 0)
+	new = malloc(sizeof(stack_t));
+	if (new == NULL)
 	{
-		fprintf(stderr, "L%d: usage: push integer\n", line_cnt);
-		status = EXIT_FAILURE;
-		return;
+		printf("Error: malloc failed\n");
+		exit(EXIT_FAILURE);
 	}
 
-	if (global.data_struct == 1)
+	tmp = *stack;
+
+	while (tmp != NULL && tmp->next != NULL)
+		tmp = tmp->next;
+
+	if (tmp)
 	{
-		if (!add_node(stack, atoi(global.argument)))
-		{
-			return;
-			status = EXIT_FAILURE;
-		}
+		new->n = glob_vars.glob_int;
+		new->next = NULL;
+		tmp->next = new;
+		new->prev = tmp;
 	}
 	else
 	{
-		if (!queue_node(stack, atoi(global.argument)))
-		{
-			return;
-			status = EXIT_FAILURE;
-		}
+		*stack = new;
+		new->n = glob_vars.glob_int;
+		new->next = NULL;
+		new->prev = NULL;
 	}
 }
